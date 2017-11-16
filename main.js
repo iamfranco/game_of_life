@@ -1,16 +1,30 @@
-var width = 2;
-var height = 2;
+var width = 5;
+var height = 5;
+var gridColor = '#333';
+var framePause = 0;
 
 // MODEL
-var life_array = [ [1,1], [2,1], [2,3], [4,2], [5,1], [6,1], [7,1] ];
+var life_array;
+// life_array = [[0,0], [1,-1], [2,-1], [2,0], [2,1]]; // Glider
+// life_array = [[0,0], [0,-1], [0,1]]; // Blinker
+
+// life_array = [
+//   [0,-1],[-1,-1],[-1,0],[-1,-2],[-2,-3],[-2,1],[-3,-1],[-4,2],[-5,2],
+//   [-4,-4],[-5,-4],[-6,-3],[-6,1],[-7,0],[-7,-1],[-7,-2],[-16,0],[-16,-1],
+//   [-17,0],[-17,-1],
+//   [3,0],[3,1],[3,2],[4,0],[4,1],[4,2],[5,3],[5,-1],[7,3],[7,-1],[7,4],[7,-2],
+//   [17,1],[18,1],[17,2],[18,2]
+// ]; // Gosper glider gun
+
+life_array = [ [0,0], [-2,1], [-2,-1], [-3,-1], [1,-1], [2,-1], [3,-1] ];
+
 var kill_array = [];
 
 // VIEW
 var canvas = document.querySelector('canvas');
 var c = canvas.getContext('2d');
-var frameCounter = document.querySelector('.frame');
-
-c.fillStyle = '#333';
+var frameCounter = document.querySelector('.frameCounter');
+var cellCounter = document.querySelector('.cellCounter');
 
 function init() {
   canvas.width = window.innerWidth*window.devicePixelRatio;
@@ -26,6 +40,7 @@ function updateGraphic() {
   for (var i=0; i<life_array.length; i++) {
     var x = life_array[i][0];
     var y = life_array[i][1];
+    c.fillStyle = gridColor;
     c.fillRect(innerWidth/2+ x*width,innerHeight/2+ y*height, width, height);
   }
 }
@@ -37,8 +52,9 @@ function tick() {
   updateModel();
   updateGraphic();
   count++;
-  // console.log(count);
-  frameCounter.innerHTML = count;
+  // console.log(count + " " +life_array.length);
+  frameCounter.innerHTML = "frame: " + count;
+  cellCounter.innerHTML = life_array.length + " cells";
   if (count == 5206) clearInterval(play);
 }
 
@@ -46,13 +62,10 @@ function updateModel() {
   var old_boundary = life_array.length;
   for (var i=0; i<old_boundary; i++) {
     resurrect(i,old_boundary);
-    // console.log("old_boundary: " + old_boundary);
   }
-  // console.log(old_boundary);
   snitch(old_boundary);
   murder();
   clearSnitch();
-  // console.log(life_array);
 }
 
 function come_alive(x,y) {
@@ -69,15 +82,9 @@ function resurrect(i,old_boundary) {
   for (var i=0; i<surround_array.length; i++) {
     var sx = surround_array[i][0];
     var sy = surround_array[i][1];
-    // console.log("[" + sx + ", " + sy + "]");
-    // console.log("neighbours: " + num_of_neighbour(sx,sy,old_boundary));
     if (num_of_neighbour(sx,sy,old_boundary) == 3) {
       come_alive(sx,sy);
-      // console.log('You are alive!');
-    } else {
-      // console.log('Keep waiting!');
     }
-    // console.log(life_array);
   }
 }
 
@@ -88,18 +95,13 @@ function murder() {
 }
 
 function snitch(old_boundary) {
-  var i=0;
-  while (i<old_boundary) { // later use a for loop
+  for (var i=0; i<old_boundary; i++) {
     var x = life_array[i][0];
     var y = life_array[i][1];
     var neighbour = num_of_neighbour(x,y,old_boundary);
-    // console.log(i + " " + neighbour);
     if (neighbour !== 2 && neighbour !== 3) {
-      // console.log("Killed " + "(" + x + ", " + y + ")");
-      // life_array.splice(i,1);
       kill_array.push(i);
     }
-    i++;
   }
 }
 
@@ -109,7 +111,6 @@ function num_of_neighbour(x,y, old_boundary) {
   for (var j=0; j<old_boundary; j++) {
     if (is_neighbour_by_position(x,y,j)){
       num_of_n++;
-      // console.log("I'm his neighbour: " + life_array[j][0] +", " +  life_array[j][1]);
     }
   }
   return num_of_n;
@@ -126,14 +127,6 @@ function is_neighbour_by_position(ix, iy, j) {
     }
   }
   return false;
-}
-
-// maybe un-used
-// check if cell j is neighbour of cell i
-function is_neighbour(i,j) {
-  var ix = life_array[i][0];
-  var iy = life_array[i][1];
-  is_neighbour_by_position(ix, iy, j);
 }
 
 // get dead cells around cell i
@@ -160,4 +153,4 @@ function is_in_life_array(x,y) {
 }
 
 updateGraphic();
-var play = setInterval( tick, 10);
+var play = setInterval( tick, framePause);
