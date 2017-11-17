@@ -1,7 +1,7 @@
 var width = 5;
 var height = 5;
 var gridColor = '#56a';
-var framePause = 0;
+var framePause = 10;
 
 // MODEL
 var life_array;
