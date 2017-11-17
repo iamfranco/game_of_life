@@ -16,9 +16,9 @@ var life_array;
 //   [17,1],[18,1],[17,2],[18,2]
 // ]; // Gosper glider gun
 
-life_array = [ [0,0], [-2,1], [-2,-1], [-3,-1], [1,-1], [2,-1], [3,-1] ];
+life_array = [ [0,0], [-2,1], [-2,-1], [-3,-1], [1,-1], [2,-1], [3,-1] ]; // Acorn pattern
 
-var kill_array = [];
+var limits = [life_array.length, life_array.length, life_array.length];
 
 // VIEW
 var canvas = document.querySelector('canvas');
@@ -37,13 +37,18 @@ init();
 
 function updateGraphic() {
   c.clearRect(0, 0, innerWidth, innerHeight);
-  for (var i=0; i<life_array.length; i++) {
-    var x = life_array[i][0];
-    var y = life_array[i][1];
+  for (var i=0; i<limits[1]; i++) {
+    var x = Math.floor(innerWidth/2+ life_array[i][0]*width);
+    var y = Math.floor(innerHeight/2+ life_array[i][1]*height);
     c.fillStyle = gridColor;
-    c.fillRect(innerWidth/2+ x*width,innerHeight/2+ y*height, width, height);
+    c.fillRect(x,y, width, height);
   }
 }
+
+window.addEventListener('resize', function(){
+  init();
+  updateGraphic();
+})
 
 
 // CONTROLLER
@@ -52,105 +57,86 @@ function tick() {
   updateModel();
   updateGraphic();
   count++;
-  // console.log(count + " " +life_array.length);
   frameCounter.innerHTML = "frame: " + count;
-  cellCounter.innerHTML = life_array.length + " cells";
+  cellCounter.innerHTML = limits[2] + " cells";
   if (count == 5206) clearInterval(play);
 }
 
 function updateModel() {
-  var old_boundary = life_array.length;
-  for (var i=0; i<old_boundary; i++) {
-    resurrect(i,old_boundary);
-  }
-  snitch(old_boundary);
-  murder();
-  clearSnitch();
+  spawnCells();
+  curseCells();
+  // life_array = life_array.slice(0,limits[1]);
+  limits[0] = limits[1];
+  limits[2] = limits[1];
 }
 
-function come_alive(x,y) {
-  life_array.push([x,y]);
+function swap(i,j) {
+  var temp = life_array[i];
+  life_array[i] = life_array[j];
+  life_array[j] = temp;
 }
 
-function clearSnitch() {
-  kill_array = [];
-}
-
-// cell i resurrects neighbouring cells
-function resurrect(i,old_boundary) {
-  var surround_array = get_surrounding(i);
-  for (var i=0; i<surround_array.length; i++) {
-    var sx = surround_array[i][0];
-    var sy = surround_array[i][1];
-    if (num_of_neighbour(sx,sy,old_boundary) == 3) {
-      come_alive(sx,sy);
-    }
-  }
-}
-
-function murder() {
-  for (var i=kill_array.length-1; i>=0; i--) {
-    life_array.splice(kill_array[i],1);
-  }
-}
-
-function snitch(old_boundary) {
-  for (var i=0; i<old_boundary; i++) {
-    var x = life_array[i][0];
-    var y = life_array[i][1];
-    var neighbour = num_of_neighbour(x,y,old_boundary);
-    if (neighbour !== 2 && neighbour !== 3) {
-      kill_array.push(i);
-    }
-  }
-}
-
-// get number of neighbours around (x,y)
-function num_of_neighbour(x,y, old_boundary) {
-  var num_of_n = 0;
-  for (var j=0; j<old_boundary; j++) {
-    if (is_neighbour_by_position(x,y,j)){
-      num_of_n++;
-    }
-  }
-  return num_of_n;
-}
-
-// check if cell j is neighbour of (ix, iy)
-function is_neighbour_by_position(ix, iy, j) {
-  var jx = life_array[j][0];
-  var jy = life_array[j][1];
-  if (ix == jx && iy == jy) return false; // false if same cell
-  if (ix == jx + 1 || ix == jx || ix == jx - 1) {
-    if (iy == jy + 1 || iy == jy || iy == jy - 1) {
-      if (ix !== jx || iy !== jy) return true;
-    }
-  }
+function isNeighbour(x,y,i) {
+  var ix = life_array[i][0];
+  var iy = life_array[i][1];
+  if (x == ix && y == iy) return false;
+  if (x <= ix + 1 && x + 1 >= ix && y <= iy + 1 && y + 1 >= iy) return true;
   return false;
 }
 
-// get dead cells around cell i
-function get_surrounding(i) {
-  var surround_array = [];
-  for (var dx = -1; dx <=1; dx++) {
-    for (var dy = -1; dy <= 1; dy++) {
-      var sx = life_array[i][0]+dx;
-      var sy = life_array[i][1]+dy;
-      if (!is_in_life_array(sx, sy)) {
-        surround_array.push([sx, sy]);
-      }
-    }
+function countNeighbours(x,y) {
+  var n = 0;
+  for (var i=0; i<limits[0]; i++) {
+    if (isNeighbour(x,y,i)) n++;
   }
-  return surround_array;
+  for (var i=limits[1]; i<limits[2]; i++) {
+    if (isNeighbour(x,y,i)) n++;
+  }
+  return n;
 }
 
-// check if (x,y) is in life_array
-function is_in_life_array(x,y) {
-  for (var i=0; i<life_array.length; i++) {
+function isAlive(x,y,lim) {
+  for (var i=0; i<lim; i++) {
     if (x == life_array[i][0] && y == life_array[i][1]) return true;
   }
   return false;
 }
 
-updateGraphic();
+function spawnCells() {
+  for (var i=0; i<limits[0]; i++) {
+    for (var dx = -1; dx <=1; dx++) {
+      for (var dy = -1; dy <= 1; dy++) {
+        var x = life_array[i][0] + dx;
+        var y = life_array[i][1] + dy;
+        if (!isAlive(x, y, limits[1]) && countNeighbours(x, y)==3) {
+          addCell(x,y);
+        }
+      }
+    }
+  }
+}
+
+function curseCells() {
+  for (var i=0; i<limits[0]; i++) {
+    var nb = countNeighbours(life_array[i][0],life_array[i][1]);
+    if (nb < 2 || nb > 3) {
+      deleteCell(i);
+      i--;
+    }
+  }
+}
+
+function addCell(x,y) {
+  life_array[limits[1]] = [x,y];
+  limits[1]++;
+  limits[2]++;
+}
+
+function deleteCell(i) {
+  swap(i,limits[1]-1);
+  swap(i,limits[0]-1);
+  limits[0]--;
+  limits[1]--;
+}
+
 var play = setInterval( tick, framePause);
