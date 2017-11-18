@@ -1,30 +1,27 @@
-var width = 5;
-var height = 5;
+var gridSize = 4;
 var gridColor = '#56a';
 var framePause = 10;
 
-// MODEL
-var life_array;
-// life_array = [[0,0], [1,-1], [2,-1], [2,0], [2,1]]; // Glider
-// life_array = [[0,0], [0,-1], [0,1]]; // Blinker
-
-// life_array = [
-//   [0,-1],[-1,-1],[-1,0],[-1,-2],[-2,-3],[-2,1],[-3,-1],[-4,2],[-5,2],
-//   [-4,-4],[-5,-4],[-6,-3],[-6,1],[-7,0],[-7,-1],[-7,-2],[-16,0],[-16,-1],
-//   [-17,0],[-17,-1],
-//   [3,0],[3,1],[3,2],[4,0],[4,1],[4,2],[5,3],[5,-1],[7,3],[7,-1],[7,4],[7,-2],
-//   [17,1],[18,1],[17,2],[18,2]
-// ]; // Gosper glider gun
-
-life_array = [ [0,0], [-2,1], [-2,-1], [-3,-1], [1,-1], [2,-1], [3,-1] ]; // Acorn pattern
+///////////////////// MODEL /////////////////////
+var patterns;
+var defaultPattern = "patterns = {glider: [[0,0], [1,-1], [2,-1], [2,0], [2,1]],blinker: [[0,0], [0,-1], [0,1]],glider_gun: [[0,-1],[-1,-1],[-1,0],[-1,-2],[-2,-3],[-2,1],[-3,-1],[-4,2],[-5,2],[-4,-4],[-5,-4],[-6,-3],[-6,1],[-7,0],[-7,-1],[-7,-2],[-16,0],[-16,-1],[-17,0],[-17,-1],[3,0],[3,1],[3,2],[4,0],[4,1],[4,2],[5,3],[5,-1],[7,3],[7,-1],[7,4],[7,-2],[17,1],[18,1],[17,2],[18,2]],acorn: [ [0,0], [-2,1], [-2,-1], [-3,-1], [1,-1], [2,-1], [3,-1] ]}";
+eval(defaultPattern);
+var life_array = patterns.blinker;
 
 var limits = [life_array.length, life_array.length, life_array.length];
 
 // VIEW
-var canvas = document.querySelector('canvas');
+var canvas = $('canvas');
+var frameCounter = $('.frameCounter');
+var cellCounter = $('.cellCounter');
+var gridSizeText = $('.gridSize');
 var c = canvas.getContext('2d');
-var frameCounter = document.querySelector('.frameCounter');
-var cellCounter = document.querySelector('.cellCounter');
+
+var menu = $('.menu');
+var menuBtn = $('.menuBtn');
+var patternPickerItem = document.getElementsByClassName('pattern-picker-item');
+var gridSizeBtnLeft = $('.gridSizeBtn.btn--left');
+var gridSizeBtnRight = $('.gridSizeBtn.btn--right');
 
 function init() {
   canvas.width = window.innerWidth*window.devicePixelRatio;
@@ -38,10 +35,10 @@ init();
 function updateGraphic() {
   c.clearRect(0, 0, innerWidth, innerHeight);
   for (var i=0; i<limits[1]; i++) {
-    var x = Math.floor(innerWidth/2+ life_array[i][0]*width);
-    var y = Math.floor(innerHeight/2+ life_array[i][1]*height);
+    var x = Math.floor(innerWidth/2+ (life_array[i][0]-1/2)*gridSize);
+    var y = Math.floor(innerHeight/2+ (life_array[i][1]-1/2)*gridSize);
     c.fillStyle = gridColor;
-    c.fillRect(x,y, width, height);
+    c.fillRect(x,y, gridSize, gridSize);
   }
 }
 
@@ -50,8 +47,17 @@ window.addEventListener('resize', function(){
   updateGraphic();
 })
 
+function updateGridSizeDisplay() {
+  gridSizeText.innerHTML = gridSize;
+  if (gridSize > 1) {
+    gridSizeBtnLeft.classList.remove('inactive');
+  } else {
+    gridSizeBtnLeft.classList.add('inactive');
+  }
+}
+updateGridSizeDisplay();
 
-// CONTROLLER
+// INTERNAL
 var count = 0;
 function tick() {
   updateModel();
@@ -140,3 +146,38 @@ function deleteCell(i) {
 }
 
 var play = setInterval( tick, framePause);
+
+// CONTROLLER
+
+menuBtn.addEventListener('mousedown', function() {
+  menu.classList.toggle('active');
+  menuBtn.classList.toggle('active');
+})
+
+for (var i=0; i<patternPickerItem.length; i++) {
+  patternPickerItem[i].addEventListener('mousedown', function() {
+    clearInterval(play);
+    eval(defaultPattern);
+    life_array = patterns[this.dataset.name];
+    limits = [life_array.length, life_array.length, life_array.length];
+    play = setInterval( tick, framePause);
+    count = 0;
+    menu.classList.remove('active');
+    menuBtn.classList.toggle('active');
+  })
+}
+
+gridSizeBtnLeft.addEventListener('mousedown', function() {
+  if (gridSize>1) {
+    gridSize /= 2;
+    updateGridSizeDisplay();
+  }
+})
+
+gridSizeBtnRight.addEventListener('mousedown', function() {
+  gridSize *= 2;
+  updateGridSizeDisplay();
+})
+
+//////////////// helper function ////////////////////
+function $(x) {return document.querySelector(x)}

@@ -1,0 +1,177 @@
+body{
+  margin: 0;
+  -webkit-touch-callout: none;
+    -webkit-user-select: none;
+     -khtml-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
+}
+.counter {
+  font-family: 'Roboto Mono', monospace;
+  z-index: 1;
+  position: fixed;
+  bottom: 0;
+  color: #555;
+  padding: 5px 10px;
+}
+.cellCounter {
+  right: 0;
+}
+canvas {
+  position: fixed;
+}
+
+/* Burger Menu */
+.menuBtn {
+  width: 40px;
+  height: 40px;
+  position: fixed;
+  z-index: 2;
+  transition: all 0.2s ease;
+}
+
+.menuBtn .menu-line {
+  width: 30px;
+  height: 3px;
+  background: #333;
+  position: relative;
+  top: 19px;
+  left: 7px;
+  transition: all 0.2s ease-in-out;
+}
+
+.menuBtn .menu-line::before,
+.menuBtn .menu-line::after {
+  width: 30px;
+  height: 3px;
+  position: absolute;
+  background: #333;
+  top: 14px;
+  content:"";
+  transition: all 0.2s ease-in-out;
+}
+
+.menuBtn .menu-line::before {
+  top: 10px;
+}
+
+.menuBtn .menu-line::after {
+  top: -10px;
+}
+
+.menuBtn.active .menu-line {
+  background: rgba(0,0,0,0);
+}
+
+.menuBtn.active .menu-line::before {
+  top: 0;
+  transform: rotate(-45deg);
+  background: #333;
+}
+
+.menuBtn.active .menu-line::after {
+  top: 0;
+  transform: rotate(45deg);
+  background: #333;
+}
+/* END Burger Menu */
+
+/* Menu */
+.menu {
+  font-family: 'Saira Semi Condensed', sans-serif;
+  opacity: 0;
+  transition: all 0.2s ease;
+  position: fixed;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255,255,255,0.5);
+  transform: translateY(-10px);
+  z-index: 1;
+  pointer-events: none;
+}
+.menu.active {
+  opacity: 1;
+  pointer-events: all;
+  transform: translateY(0);
+}
+
+.menu-container {
+  margin: 50vh auto;
+  width: 300px;
+  transform: translateY(-50%);
+  padding: 20px;
+}
+
+.menu-title {
+  font-size: 20px;
+  text-align: center;
+}
+
+.pattern-picker-item {
+  margin: 10px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.changer {
+  text-align: center;
+}
+
+.textDisplay {
+  display: inline-block;
+  font-size: 44px;
+  width: 100px;
+}
+
+.menu-container .btn {
+  display: inline-block;
+  cursor: pointer;
+}
+
+.menu-container .btn--left {
+  width: 0;
+  height: 0;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-right: 20px solid;
+}
+
+.menu-container .btn--right {
+  width: 0;
+  height: 0;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  border-left: 20px solid;
+}
+
+.menu-container .btn.inactive {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.small {
+  font-size: 20px;
+}
+
+/* END Menu */
+
+a.view-in-github {
+  font-family: 'Saira Semi Condensed', sans-serif;
+  position: fixed;
+  top: 0;
+  right: 0;
+  text-decoration: none;
+  color: #fff;
+  cursor: pointer;
+  font-size: 20px;
+  padding: 5px 20px;
+  background: rgba(0,0,0,0.3);
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+a.view-in-github:hover {
+  background: rgba(0,0,0,0.7);
+  color: #fff;
+}
