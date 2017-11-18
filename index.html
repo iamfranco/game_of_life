@@ -8,23 +8,23 @@
   </head>
   <body>
     <a href="https://github.com/iamfranco/game_of_life" target="_blank" class="view-in-github">View in Github</a>
-    <div class="menuBtn btn">
+    <div class="menuBtn btn" onclick="menuBtnClick()">
       <div class="menu-line"></div>
     </div>
     <div class="menu">
       <div class="menu-container">
         <div class="pattern-picker">
           <div class="menu-title">Pattern</div>
-          <div class="pattern-picker-item" data-name="glider">glider</div>
-          <div class="pattern-picker-item" data-name="glider_gun">glider gun</div>
-          <div class="pattern-picker-item" data-name="blinker">blinker</div>
-          <div class="pattern-picker-item" data-name="acorn">acorn</div>
+          <div class="pattern-picker-item" data-name="glider" onclick="patternPickerClick('glider')">glider</div>
+          <div class="pattern-picker-item" data-name="glider_gun" onclick="patternPickerClick('glider_gun')">glider gun</div>
+          <div class="pattern-picker-item" data-name="blinker" onclick="patternPickerClick('blinker')">blinker</div>
+          <div class="pattern-picker-item" data-name="acorn" onclick="patternPickerClick('acorn')">acorn</div>
         </div>
         <div class="gridSize-changer changer">
           <div class="menu-title">Grid Size</div>
-          <div class="gridSizeBtn btn btn--left"></div>
+          <div class="gridSizeBtn btn btn--left" onclick="gridsizeBtnLeftClick()"></div>
           <div class="gridSize textDisplay"></div>
-          <div class="gridSizeBtn btn btn--right"></div>
+          <div class="gridSizeBtn btn btn--right" onclick="gridsizeBtnRightClick()"></div>
         </div>
       </div>
     </div>

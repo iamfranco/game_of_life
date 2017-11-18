@@ -19,7 +19,6 @@ var c = canvas.getContext('2d');
 
 var menu = $('.menu');
 var menuBtn = $('.menuBtn');
-var patternPickerItem = document.getElementsByClassName('pattern-picker-item');
 var gridSizeBtnLeft = $('.gridSizeBtn.btn--left');
 var gridSizeBtnRight = $('.gridSizeBtn.btn--right');
 
@@ -149,35 +148,33 @@ var play = setInterval( tick, framePause);
 
 // CONTROLLER
 
-menuBtn.addEventListener('mousedown', function() {
+function menuBtnClick() {
   menu.classList.toggle('active');
   menuBtn.classList.toggle('active');
-})
-
-for (var i=0; i<patternPickerItem.length; i++) {
-  patternPickerItem[i].addEventListener('mousedown', function() {
-    clearInterval(play);
-    eval(defaultPattern);
-    life_array = patterns[this.dataset.name];
-    limits = [life_array.length, life_array.length, life_array.length];
-    play = setInterval( tick, framePause);
-    count = 0;
-    menu.classList.remove('active');
-    menuBtn.classList.toggle('active');
-  })
 }
 
-gridSizeBtnLeft.addEventListener('mousedown', function() {
+function patternPickerClick(p) {
+  clearInterval(play);
+  eval(defaultPattern);
+  life_array = patterns[p];
+  limits = [life_array.length, life_array.length, life_array.length];
+  play = setInterval( tick, framePause);
+  count = 0;
+  menu.classList.remove('active');
+  menuBtn.classList.toggle('active');
+}
+
+function gridsizeBtnLeftClick() {
   if (gridSize>1) {
     gridSize /= 2;
     updateGridSizeDisplay();
   }
-})
+}
 
-gridSizeBtnRight.addEventListener('mousedown', function() {
+function gridsizeBtnRightClick() {
   gridSize *= 2;
   updateGridSizeDisplay();
-})
+}
 
 //////////////// helper function ////////////////////
 function $(x) {return document.querySelector(x)}
