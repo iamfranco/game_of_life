@@ -6,7 +6,7 @@ var framePause = 10;
 var patterns;
 var defaultPattern = "patterns = {glider: [[0,0], [1,-1], [2,-1], [2,0], [2,1]],blinker: [[0,0], [0,-1], [0,1]],glider_gun: [[0,-1],[-1,-1],[-1,0],[-1,-2],[-2,-3],[-2,1],[-3,-1],[-4,2],[-5,2],[-4,-4],[-5,-4],[-6,-3],[-6,1],[-7,0],[-7,-1],[-7,-2],[-16,0],[-16,-1],[-17,0],[-17,-1],[3,0],[3,1],[3,2],[4,0],[4,1],[4,2],[5,3],[5,-1],[7,3],[7,-1],[7,4],[7,-2],[17,1],[18,1],[17,2],[18,2]],acorn: [ [0,0], [-2,1], [-2,-1], [-3,-1], [1,-1], [2,-1], [3,-1] ]}";
 eval(defaultPattern);
-var life_array = patterns.blinker;
+var life_array = patterns.acorn;
 
 var limits = [life_array.length, life_array.length, life_array.length];
 
